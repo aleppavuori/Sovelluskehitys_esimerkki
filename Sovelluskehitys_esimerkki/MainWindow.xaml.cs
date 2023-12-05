@@ -24,7 +24,7 @@ namespace Sovelluskehitys_esimerkki
     public partial class MainWindow : Window
     {
         private string solun_arvo;
-        string polku = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\k5000833\\source\\repos\\Sovelluskehitys_esimerkki\\tuotekanta.mdf;Integrated Security=True;Connect Timeout=30";
+        string polku = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=M:\\soveluskehitys\\tuotekanta.mdf;Integrated Security=True;Connect Timeout=30";
         Tietokantatoiminnot tkt;
         public MainWindow()
         {
