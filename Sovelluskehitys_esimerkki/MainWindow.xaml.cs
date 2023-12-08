@@ -197,13 +197,13 @@ namespace Sovelluskehitys_esimerkki
             string asiakasID = combo_asiakkaat.SelectedValue.ToString();
             string tuoteID = combo_tuotteet_2.SelectedValue.ToString();
 
-            string sql = "INSERT INTO tilaukset (asiakas_id) VALUES ('"+asiakasID+"')";
+            string sql = "INSERT INTO tilauksen_tuotteet (tuotetiedot_id) VALUES ('"+tuoteID+"')";
 
             SqlCommand komento = new SqlCommand(sql, kanta);
             komento.ExecuteNonQuery();
             kanta.Close();
 
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.nimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tu.id=ti.tuotetiedot_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
+            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
 
         }
 
