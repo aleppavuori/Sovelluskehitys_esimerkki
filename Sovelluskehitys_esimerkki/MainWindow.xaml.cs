@@ -35,17 +35,17 @@ namespace Sovelluskehitys_esimerkki
             tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2);
             paivitaAsiakasComboBox();
 
-            tkt.paivitaDataGrid("SELECT * FROM tuotteet", "tuotteet", tuote_lista);
+            tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
             tkt.paivitaDataGrid("SELECT * FROM asiakkaat", "asiakkaat", asiakas_lista);
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.nimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotteet tu WHERE a.id=ti.asiakas_id AND tu.id=ti.tuote_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.nimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotteet tu WHERE a.id=ti.asiakas_id AND tu.id=ti.tuote_id AND ti.toimitettu ='1'", "toimitetut", toimitetut_lista);
+            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
+            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu ='1'", "toimitetut", toimitetut_lista);
         }
 
         private void painike_hae_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                tkt.paivitaDataGrid("SELECT * FROM tuotteet", "tuotteet", tuote_lista);
+                tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
             }
             catch 
             {
@@ -58,14 +58,14 @@ namespace Sovelluskehitys_esimerkki
             SqlConnection kanta = new SqlConnection(polku);
             kanta.Open();
 
-            string sql = "INSERT INTO tuotteet (nimi, hinta) VALUES ('" + tuote_nimi.Text + "','" + tuote_hinta.Text + "')";
+            string sql = "INSERT INTO tuotetiedot (tuotenimi, tuotehinta) VALUES ('" + tuote_nimi.Text + "','" + tuote_hinta.Text + "')";
 
             SqlCommand komento = new SqlCommand(sql, kanta);
             komento.ExecuteNonQuery();
 
             kanta.Close();
 
-            tkt.paivitaDataGrid("SELECT * FROM tuotteet", "tuotteet", tuote_lista);
+            tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
             tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2);
         }
 
@@ -105,11 +105,11 @@ namespace Sovelluskehitys_esimerkki
             kanta.Open();
 
             string id = combo_tuotteet.SelectedValue.ToString();
-            SqlCommand komento = new SqlCommand("DELETE FROM tuotteet WHERE id =" + id + ";", kanta);
+            SqlCommand komento = new SqlCommand("DELETE FROM tuotetiedot WHERE id =" + id + ";", kanta);
             komento.ExecuteNonQuery();
             kanta.Close() ;
 
-            tkt.paivitaDataGrid("SELECT * FROM tuotteet", "tuotteet", tuote_lista);
+            tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
             tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2);
         }
 
@@ -140,7 +140,7 @@ namespace Sovelluskehitys_esimerkki
                     if (sarake == 1) kanta_sarake = "nimi";
                     else if (sarake == 2) kanta_sarake = "hinta";
 
-                    kysely = "UPDATE tuotteet SET " + kanta_sarake + "='" + uusi_arvo + "' WHERE id=" + tuote_id;
+                    kysely = "UPDATE tuotetiedot SET " + kanta_sarake + "='" + uusi_arvo + "' WHERE id=" + tuote_id;
 
                     SqlCommand komento = new SqlCommand(kysely, kanta);
                     komento.ExecuteNonQuery();
@@ -197,13 +197,13 @@ namespace Sovelluskehitys_esimerkki
             string asiakasID = combo_asiakkaat.SelectedValue.ToString();
             string tuoteID = combo_tuotteet_2.SelectedValue.ToString();
 
-            string sql = "INSERT INTO tilaukset (asiakas_id, tuote_id) VALUES ('"+asiakasID+"', '"+tuoteID+"')";
+            string sql = "INSERT INTO tilaukset (asiakas_id) VALUES ('"+asiakasID+"')";
 
             SqlCommand komento = new SqlCommand(sql, kanta);
             komento.ExecuteNonQuery();
             kanta.Close();
 
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.nimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotteet tu WHERE a.id=ti.asiakas_id AND tu.id=ti.tuote_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
+            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.nimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tu.id=ti.tuotetiedot_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
 
         }
 
@@ -221,8 +221,8 @@ namespace Sovelluskehitys_esimerkki
             komento.ExecuteNonQuery();
             kanta.Close();
 
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.nimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotteet tu WHERE a.id=ti.asiakas_id AND tu.id=ti.tuote_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.nimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotteet tu WHERE a.id=ti.asiakas_id AND tu.id=ti.tuote_id AND ti.toimitettu ='1'", "toimitetut", toimitetut_lista);
+            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
+            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu ='1'", "toimitetut", toimitetut_lista);
 
         }
     }

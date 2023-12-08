@@ -38,7 +38,7 @@ namespace Sovelluskehitys_esimerkki
             SqlConnection kanta = new SqlConnection(polku);
             kanta.Open();
 
-            SqlCommand komento = new SqlCommand("SELECT * FROM tuotteet", kanta);
+            SqlCommand komento = new SqlCommand("SELECT * FROM tuotetiedot", kanta);
             SqlDataReader lukija = komento.ExecuteReader();
 
             DataTable dt = new DataTable();
