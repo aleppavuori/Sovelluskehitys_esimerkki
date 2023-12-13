@@ -37,8 +37,8 @@ namespace Sovelluskehitys_esimerkki
 
             tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
             tkt.paivitaDataGrid("SELECT * FROM asiakkaat", "asiakkaat", asiakas_lista);
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu ='1'", "toimitetut", toimitetut_lista);
+            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
+            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu ='1'", "toimitetut", toimitetut_lista);
         }
 
         private void painike_hae_Click(object sender, RoutedEventArgs e)
@@ -193,19 +193,22 @@ namespace Sovelluskehitys_esimerkki
         {
             SqlConnection kanta = new SqlConnection(polku);
             kanta.Open();
-
-            string asiakasID = combo_asiakkaat.SelectedValue.ToString();
+            string tilausID = combo_asiakkaat.SelectedValue.ToString(); //TÄTÄ PITÄÄ MUUTTAA SOPIVAKSI
             string tuoteID = combo_tuotteet_2.SelectedValue.ToString();
 
-            string sql = "INSERT INTO tilauksen_tuotteet (tuotetiedot_id) VALUES ('"+tuoteID+"')";
+            string sql = "INSERT INTO tilaukset (tilaus_id) VALUES ('" + tilausID + "')";
+
+            //string sql = "INSERT INTO tilauksen_tuotteet (tilaus_id, tuotetiedot_id) VALUES ('" + tilausID + "','" + tuoteID + "')";
 
             SqlCommand komento = new SqlCommand(sql, kanta);
             komento.ExecuteNonQuery();
             kanta.Close();
 
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
+            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
 
         }
+    
+
 
         private void painike_toimita_Click(object sender, RoutedEventArgs e)
         {
