@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Windows.Markup;
 
 namespace Sovelluskehitys_esimerkki
 {
@@ -24,7 +25,7 @@ namespace Sovelluskehitys_esimerkki
     public partial class MainWindow : Window
     {
         private string solun_arvo;
-        string polku = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=M:\\soveluskehitys\\tuotekanta.mdf;Integrated Security=True;Connect Timeout=30";
+        string polku = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Aleksi\Documents\tuotekanta.mdf;Integrated Security=True;Connect Timeout=30";
         Tietokantatoiminnot tkt;
         public MainWindow()
         {
@@ -32,11 +33,12 @@ namespace Sovelluskehitys_esimerkki
 
             tkt = new Tietokantatoiminnot();
 
-            tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2);
+            tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2, combo_tuotteet_3);
             paivitaAsiakasComboBox();
 
             tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
             tkt.paivitaDataGrid("SELECT * FROM asiakkaat", "asiakkaat", asiakas_lista);
+
             tkt.paivitaDataGrid("SELECT tit.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu " +
                     "FROM tilaukset ti " +
                     "JOIN tilauksen_tuotteet tit ON ti.id = tit.tilaus_id " +
@@ -49,6 +51,20 @@ namespace Sovelluskehitys_esimerkki
                     "JOIN asiakkaat a ON a.id = ti.asiakas_id " +
                     "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
                     "WHERE tit.toimitettu = '1'", "tilaukset", toimitetut_lista);
+
+            tkt.paivitaDataGrid("SELECT tak.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tak.hyväksytty AS hyväksytty " +
+                     "FROM takuupalautukset tak " +
+                     "JOIN tilauksen_tuotteet tit ON tak.tilauksentuotteet_id = tit.id " +
+                     "JOIN asiakkaat a ON a.id = tak.asiakas_id " +
+                     "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                     "WHERE tak.hyväksytty = '0'", "tilaukset", Palautukset_lista);
+            tkt.paivitaDataGrid("SELECT tak.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tak.hyväksytty AS hyväksytty " +
+                    "FROM takuupalautukset tak " +
+                    "JOIN tilauksen_tuotteet tit ON tak.tilauksentuotteet_id = tit.id " +
+                    "JOIN asiakkaat a ON a.id = tak.asiakas_id " +
+                    "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                    "WHERE tak.hyväksytty = '1'", "tilaukset", palautetut_lista);
+
         }
 
         private void painike_hae_Click(object sender, RoutedEventArgs e)
@@ -57,7 +73,7 @@ namespace Sovelluskehitys_esimerkki
             {
                 tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
             }
-            catch 
+            catch
             {
                 tilaviesti.Text = "Tietojen haku epäonnistui";
             }
@@ -76,11 +92,11 @@ namespace Sovelluskehitys_esimerkki
             kanta.Close();
 
             tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
-            tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2);
+            tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2, combo_tuotteet_3);
         }
 
 
-        
+
 
         private void paivitaAsiakasComboBox()
         {
@@ -97,6 +113,10 @@ namespace Sovelluskehitys_esimerkki
             combo_asiakkaat.ItemsSource = dt.DefaultView;
             combo_asiakkaat.DisplayMemberPath = "NIMI";
             combo_asiakkaat.SelectedValuePath = "ID";
+
+            combo_asiakkaat2.ItemsSource = dt.DefaultView;
+            combo_asiakkaat2.DisplayMemberPath = "NIMI";
+            combo_asiakkaat2.SelectedValuePath = "ID";
 
             while (lukija.Read())
             {
@@ -117,10 +137,10 @@ namespace Sovelluskehitys_esimerkki
             string id = combo_tuotteet.SelectedValue.ToString();
             SqlCommand komento = new SqlCommand("DELETE FROM tuotetiedot WHERE id =" + id + ";", kanta);
             komento.ExecuteNonQuery();
-            kanta.Close() ;
+            kanta.Close();
 
             tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
-            tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2);
+            tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2, combo_tuotteet_3);
         }
 
         private void tuote_lista_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
@@ -159,7 +179,7 @@ namespace Sovelluskehitys_esimerkki
 
                     tilaviesti.Text = "Uusi arvo: " + uusi_arvo;
 
-                    tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2);
+                    tkt.paivitaComboBox(combo_tuotteet, combo_tuotteet_2, combo_tuotteet_3);
                 }
                 else
                 {
@@ -172,7 +192,7 @@ namespace Sovelluskehitys_esimerkki
             }
         }
 
-        
+
 
         private void painike_asiakas_Click(object sender, RoutedEventArgs e)
         {
@@ -190,13 +210,15 @@ namespace Sovelluskehitys_esimerkki
 
                 tkt.paivitaDataGrid("SELECT * FROM asiakkaat", "asiakkaat", asiakas_lista);
 
+                paivitaAsiakasComboBox();
+
                 tilaviesti.Text = "Asiakkaan lisääminen onnistui";
-            }  
+            }
             catch
             {
                 tilaviesti.Text = "Asiakkaan lisääminen ei onnistunut";
             }
-            
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -293,6 +315,78 @@ namespace Sovelluskehitys_esimerkki
                     "JOIN asiakkaat a ON a.id = ti.asiakas_id " +
                     "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
                     "WHERE tit.toimitettu = '1'", "tilaukset", toimitetut_lista);
+
+        }
+
+        private void LisaaPalautus_Click(object sender, RoutedEventArgs e)
+        {
+            using (SqlConnection kanta = new SqlConnection(polku))
+            {
+                kanta.Open();
+
+                string asiakasID = combo_asiakkaat2.SelectedValue.ToString();
+                string tuoteID = combo_tuotteet_3.SelectedValue.ToString();
+
+                // Check if a record with the same asiakas_id exists in tilaukset
+                string sqlCheckExisting = $"SELECT COUNT(*) FROM tilauksen_tuotteet WHERE tuotetiedot_id = '{tuoteID}'";
+                using (SqlCommand checkExistingCommand = new SqlCommand(sqlCheckExisting, kanta))
+                {
+                    int existingCount = (int)checkExistingCommand.ExecuteScalar();
+
+                    if (existingCount > 0)
+                    {
+                        // Insert into takuupalautukset table
+                        string sqlPalautukset = $"INSERT INTO takuupalautukset (asiakas_id, tilauksentuotteet_id) VALUES ('{asiakasID}', '{tuoteID}')";
+                        using (SqlCommand komento1 = new SqlCommand(sqlPalautukset, kanta))
+                        {
+                            komento1.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        //tähän joku viesti ettei ole sellaista tilausta
+                    }
+                }
+
+                
+
+                kanta.Close();
+
+                tkt.paivitaDataGrid("SELECT tak.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu " +
+                    "FROM takuupalautukset tak " +
+                    "JOIN tilauksen_tuotteet tit ON tak.tilauksentuotteet_id = tit.id " + 
+                    "JOIN asiakkaat a ON a.id = tak.asiakas_id " + 
+                    "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                    "WHERE tak.hyväksytty = '0'", "tilaukset", Palautukset_lista);
+            }
+        }
+        private void painike_hyvaksy_Click(object sender, RoutedEventArgs e)
+        {
+            DataRowView rivinakyma = (DataRowView)((Button)e.Source).DataContext;
+            String palautus_id = rivinakyma[0].ToString();
+
+            SqlConnection kanta = new SqlConnection(polku);
+            kanta.Open();
+
+            string sql = "UPDATE takuupalautukset SET hyväksytty=1 WHERE id='" + palautus_id + "';";
+
+            SqlCommand komento = new SqlCommand(sql, kanta);
+            komento.ExecuteNonQuery();
+            kanta.Close();
+
+            tkt.paivitaDataGrid("SELECT tak.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tak.hyväksytty AS hyväksytty " +
+                    "FROM takuupalautukset tak " +
+                    "JOIN tilauksen_tuotteet tit ON tak.tilauksentuotteet_id = tit.id " +
+                    "JOIN asiakkaat a ON a.id = tak.asiakas_id " +
+                    "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                    "WHERE tak.hyväksytty = '0'", "tilaukset", Palautukset_lista);
+
+            tkt.paivitaDataGrid("SELECT tak.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tak.hyväksytty AS hyväksytty " +
+                    "FROM takuupalautukset tak " +
+                    "JOIN tilauksen_tuotteet tit ON tak.tilauksentuotteet_id = tit.id " +
+                    "JOIN asiakkaat a ON a.id = tak.asiakas_id " +
+                    "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                    "WHERE tak.hyväksytty = '1'", "tilaukset", palautetut_lista);
 
         }
     }

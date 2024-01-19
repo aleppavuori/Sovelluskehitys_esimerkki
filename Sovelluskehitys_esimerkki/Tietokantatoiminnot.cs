@@ -11,7 +11,7 @@ namespace Sovelluskehitys_esimerkki
 {
     internal class Tietokantatoiminnot
     {
-        string polku = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=M:\\soveluskehitys\\tuotekanta.mdf;Integrated Security=True;Connect Timeout=30";
+        string polku = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Aleksi\Documents\tuotekanta.mdf;Integrated Security=True;Connect Timeout=30";
 
         public void paivitaDataGrid(string kysely, string taulu, DataGrid grid)
         {
@@ -33,7 +33,7 @@ namespace Sovelluskehitys_esimerkki
             kanta.Close();
         }
 
-        public void paivitaComboBox(ComboBox kombo1, ComboBox kombo2)
+        public void paivitaComboBox(ComboBox kombo1, ComboBox kombo2, ComboBox kombo3)
         {
             SqlConnection kanta = new SqlConnection(polku);
             kanta.Open();
@@ -52,6 +52,10 @@ namespace Sovelluskehitys_esimerkki
             kombo2.ItemsSource = dt.DefaultView;
             kombo2.DisplayMemberPath = "TUOTE";
             kombo2.SelectedValuePath = "ID";
+
+            kombo3.ItemsSource = dt.DefaultView;
+            kombo3.DisplayMemberPath = "TUOTE";
+            kombo3.SelectedValuePath = "ID";
 
             while (lukija.Read())
             {
