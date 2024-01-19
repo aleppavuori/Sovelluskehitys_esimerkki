@@ -247,7 +247,8 @@ namespace Sovelluskehitys_esimerkki
                 kanta.Close();
 
                 // Refresh the data grid or perform other actions as needed
-                tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
+                tkt.paivitaDataGrid("SELECT tit.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
+                //tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
             }
         }
 
