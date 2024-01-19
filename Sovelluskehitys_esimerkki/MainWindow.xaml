@@ -82,6 +82,18 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
+            <TabItem Header="Palautukset">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid x:Name="toimitetutt_lista" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="32,21,375,173" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="id" Binding="{Binding Path='id'}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="asiakas" Binding="{Binding Path='asiakas'}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="tuote" Binding="{Binding Path='tuote'}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="toimitettu" Binding="{Binding Path='toimitettu'}" IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
         </TabControl>
         <StatusBar VerticalAlignment="Bottom">
             <TextBlock x:Name="tilaviesti" Text="Valmis"/>
