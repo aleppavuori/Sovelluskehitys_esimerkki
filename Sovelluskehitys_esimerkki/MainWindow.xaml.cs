@@ -37,8 +37,18 @@ namespace Sovelluskehitys_esimerkki
 
             tkt.paivitaDataGrid("SELECT * FROM tuotetiedot", "tuotetiedot", tuote_lista);
             tkt.paivitaDataGrid("SELECT * FROM asiakkaat", "asiakkaat", asiakas_lista);
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu ='1'", "toimitetut", toimitetut_lista);
+            tkt.paivitaDataGrid("SELECT tit.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu " +
+                    "FROM tilaukset ti " +
+                    "JOIN tilauksen_tuotteet tit ON ti.id = tit.tilaus_id " +
+                    "JOIN asiakkaat a ON a.id = ti.asiakas_id " +
+                    "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                    "WHERE tit.toimitettu = '0'", "tilaukset", tilaukset_lista);
+            tkt.paivitaDataGrid("SELECT tit.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu " +
+                    "FROM tilaukset ti " +
+                    "JOIN tilauksen_tuotteet tit ON ti.id = tit.tilaus_id " +
+                    "JOIN asiakkaat a ON a.id = ti.asiakas_id " +
+                    "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                    "WHERE tit.toimitettu = '1'", "tilaukset", toimitetut_lista);
         }
 
         private void painike_hae_Click(object sender, RoutedEventArgs e)
@@ -246,9 +256,12 @@ namespace Sovelluskehitys_esimerkki
 
                 kanta.Close();
 
-                // Refresh the data grid or perform other actions as needed
-                tkt.paivitaDataGrid("SELECT tit.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
-                //tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
+                tkt.paivitaDataGrid("SELECT tit.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu " +
+                    "FROM tilaukset ti " +
+                    "JOIN tilauksen_tuotteet tit ON ti.id = tit.tilaus_id " +
+                    "JOIN asiakkaat a ON a.id = ti.asiakas_id " +
+                    "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                    "WHERE tit.toimitettu = '0'", "tilaukset", tilaukset_lista);
             }
         }
 
@@ -262,14 +275,24 @@ namespace Sovelluskehitys_esimerkki
             SqlConnection kanta = new SqlConnection(polku);
             kanta.Open();
 
-            string sql = "UPDATE tilaukset SET toimitettu=1 WHERE id='" + tilaus_id + "';";
+            string sql = "UPDATE tilauksen_tuotteet SET toimitettu=1 WHERE id='" + tilaus_id + "';";
 
             SqlCommand komento = new SqlCommand(sql, kanta);
             komento.ExecuteNonQuery();
             kanta.Close();
 
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu='0'", "tilaukset", tilaukset_lista);
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, ti.toimitettu AS toimitettu  FROM tilaukset ti, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND ti.toimitettu ='1'", "toimitetut", toimitetut_lista);
+            tkt.paivitaDataGrid("SELECT tit.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu " +
+                    "FROM tilaukset ti " +
+                    "JOIN tilauksen_tuotteet tit ON ti.id = tit.tilaus_id " +
+                    "JOIN asiakkaat a ON a.id = ti.asiakas_id " +
+                    "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                    "WHERE tit.toimitettu = '0'", "tilaukset", tilaukset_lista);
+            tkt.paivitaDataGrid("SELECT tit.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu " +
+                    "FROM tilaukset ti " +
+                    "JOIN tilauksen_tuotteet tit ON ti.id = tit.tilaus_id " +
+                    "JOIN asiakkaat a ON a.id = ti.asiakas_id " +
+                    "JOIN tuotetiedot tu ON tu.id = tit.tuotetiedot_id " +
+                    "WHERE tit.toimitettu = '1'", "tilaukset", toimitetut_lista);
 
         }
     }
