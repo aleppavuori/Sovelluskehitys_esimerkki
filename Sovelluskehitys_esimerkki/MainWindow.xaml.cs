@@ -191,23 +191,66 @@ namespace Sovelluskehitys_esimerkki
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            SqlConnection kanta = new SqlConnection(polku);
-            kanta.Open();
-            string tilausID = combo_asiakkaat.SelectedValue.ToString(); //TÄTÄ PITÄÄ MUUTTAA SOPIVAKSI
-            string tuoteID = combo_tuotteet_2.SelectedValue.ToString();
+            using (SqlConnection kanta = new SqlConnection(polku))
+            {
+                kanta.Open();
 
-            string sql = "INSERT INTO tilaukset (tilaus_id) VALUES ('" + tilausID + "')";
+                string asiakasID = combo_asiakkaat.SelectedValue.ToString();
+                string tuoteID = combo_tuotteet_2.SelectedValue.ToString();
 
-            //string sql = "INSERT INTO tilauksen_tuotteet (tilaus_id, tuotetiedot_id) VALUES ('" + tilausID + "','" + tuoteID + "')";
+                // Check if a record with the same asiakas_id exists in tilaukset
+                string sqlCheckExisting = $"SELECT COUNT(*) FROM tilaukset WHERE asiakas_id = '{asiakasID}'";
+                using (SqlCommand checkExistingCommand = new SqlCommand(sqlCheckExisting, kanta))
+                {
+                    int existingCount = (int)checkExistingCommand.ExecuteScalar();
 
-            SqlCommand komento = new SqlCommand(sql, kanta);
-            komento.ExecuteNonQuery();
-            kanta.Close();
+                    if (existingCount == 0)
+                    {
+                        // Insert into tilaukset table
+                        string sqlTilaukset = $"INSERT INTO tilaukset (asiakas_id) VALUES ('{asiakasID}')";
+                        using (SqlCommand komento1 = new SqlCommand(sqlTilaukset, kanta))
+                        {
+                            komento1.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        // Handle the case where a record with the same asiakas_id already exists
+                        // You may want to display a message or take appropriate action
+                    }
+                }
 
-            tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
+                // Retrieve the generated tilaus_id
+                string sqlRetrieveTilausID = $"SELECT id FROM tilaukset WHERE asiakas_id = '{asiakasID}'";
+                using (SqlCommand komento2 = new SqlCommand(sqlRetrieveTilausID, kanta))
+                {
+                    object result = komento2.ExecuteScalar();
 
+                    if (result != null)
+                    {
+                        string tilausID = result.ToString();
+
+                        // Insert into tilauksen_tuotteet table
+                        string sqlTilauksenTuotteet = $"INSERT INTO tilauksen_tuotteet (tilaus_id, tuotetiedot_id) VALUES ('{tilausID}', '{tuoteID}')";
+                        using (SqlCommand komento3 = new SqlCommand(sqlTilauksenTuotteet, kanta))
+                        {
+                            komento3.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        // Handle the case where no matching id was found in tilaukset
+                        // You may want to display a message or take appropriate action
+                    }
+                }
+
+                kanta.Close();
+
+                // Refresh the data grid or perform other actions as needed
+                tkt.paivitaDataGrid("SELECT ti.id AS id, a.nimi AS asiakas, tu.tuotenimi AS tuote, tit.toimitettu AS toimitettu  FROM tilaukset ti, tilauksen_tuotteet tit, asiakkaat a, tuotetiedot tu WHERE a.id=ti.asiakas_id AND tit.toimitettu='0'", "tilaukset", tilaukset_lista);
+            }
         }
-    
+
 
 
         private void painike_toimita_Click(object sender, RoutedEventArgs e)
