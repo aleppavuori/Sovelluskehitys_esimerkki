@@ -230,7 +230,7 @@ namespace Sovelluskehitys_esimerkki
                 string asiakasID = combo_asiakkaat.SelectedValue.ToString();
                 string tuoteID = combo_tuotteet_2.SelectedValue.ToString();
 
-                // Check if a record with the same asiakas_id exists in tilaukset
+                
                 string sqlCheckExisting = $"SELECT COUNT(*) FROM tilaukset WHERE asiakas_id = '{asiakasID}'";
                 using (SqlCommand checkExistingCommand = new SqlCommand(sqlCheckExisting, kanta))
                 {
@@ -238,7 +238,7 @@ namespace Sovelluskehitys_esimerkki
 
                     if (existingCount == 0)
                     {
-                        // Insert into tilaukset table
+                        
                         string sqlTilaukset = $"INSERT INTO tilaukset (asiakas_id) VALUES ('{asiakasID}')";
                         using (SqlCommand komento1 = new SqlCommand(sqlTilaukset, kanta))
                         {
@@ -247,12 +247,11 @@ namespace Sovelluskehitys_esimerkki
                     }
                     else
                     {
-                        // Handle the case where a record with the same asiakas_id already exists
-                        // You may want to display a message or take appropriate action
+                        
                     }
                 }
 
-                // Retrieve the generated tilaus_id
+                
                 string sqlRetrieveTilausID = $"SELECT id FROM tilaukset WHERE asiakas_id = '{asiakasID}'";
                 using (SqlCommand komento2 = new SqlCommand(sqlRetrieveTilausID, kanta))
                 {
@@ -262,7 +261,7 @@ namespace Sovelluskehitys_esimerkki
                     {
                         string tilausID = result.ToString();
 
-                        // Insert into tilauksen_tuotteet table
+                        
                         string sqlTilauksenTuotteet = $"INSERT INTO tilauksen_tuotteet (tilaus_id, tuotetiedot_id) VALUES ('{tilausID}', '{tuoteID}')";
                         using (SqlCommand komento3 = new SqlCommand(sqlTilauksenTuotteet, kanta))
                         {
@@ -271,8 +270,7 @@ namespace Sovelluskehitys_esimerkki
                     }
                     else
                     {
-                        // Handle the case where no matching id was found in tilaukset
-                        // You may want to display a message or take appropriate action
+                    
                     }
                 }
 
@@ -327,7 +325,7 @@ namespace Sovelluskehitys_esimerkki
                 string asiakasID = combo_asiakkaat2.SelectedValue.ToString();
                 string tuoteID = combo_tuotteet_3.SelectedValue.ToString();
 
-                // Check if a record with the same asiakas_id exists in tilaukset
+                
                 string sqlCheckExisting = $"SELECT COUNT(*) FROM tilauksen_tuotteet WHERE tuotetiedot_id = '{tuoteID}'";
                 using (SqlCommand checkExistingCommand = new SqlCommand(sqlCheckExisting, kanta))
                 {
@@ -335,7 +333,7 @@ namespace Sovelluskehitys_esimerkki
 
                     if (existingCount > 0)
                     {
-                        // Insert into takuupalautukset table
+                        
                         string sqlPalautukset = $"INSERT INTO takuupalautukset (asiakas_id, tilauksentuotteet_id) VALUES ('{asiakasID}', '{tuoteID}')";
                         using (SqlCommand komento1 = new SqlCommand(sqlPalautukset, kanta))
                         {
@@ -344,7 +342,7 @@ namespace Sovelluskehitys_esimerkki
                     }
                     else
                     {
-                        //tähän joku viesti ettei ole sellaista tilausta
+                        MessageBox.Show("Tilausta ei löytynyt", "Sellasta", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
 

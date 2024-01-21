@@ -12,8 +12,6 @@ INSERT INTO tuotetiedot (tuotenimi, tuotehinta) VALUES ('pömpeli', 333);
 
 INSERT INTO tilaukset (asiakas_id) VALUES (1);
 
-INSERT INTO asiakkaat (nimi, puhelinnumero) VALUES ('Joku Muu', '0401234667');
-
 INSERT INTO tilauksen_tuotteet (tilaus_id, tuotetiedot_id) VALUES (1, 3);
 
 INSERT INTO takuupalautukset (asiakas_id, tilauksentuotteet_id) VALUES (1, 2);
